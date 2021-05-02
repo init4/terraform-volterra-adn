@@ -42,30 +42,30 @@ resource "volterra_api_credential" "this" {
 
 resource "local_file" "this_kubeconfig" {
   content  = base64decode(volterra_api_credential.this.data)
-  filename = format("%s/_output/hipster_adn_vk8s_kubeconfig", path.root)
+  filename = format("%s/_output/adn_vk8s_kubeconfig", path.root)
 }
 
-resource "local_file" "hipster_manifest" {
-  content  = local.hipster_manifest_content
-  filename = format("%s/_output/hipster-adn.yaml", path.root)
+resource "local_file" "manifest" {
+  content  = local.manifest_content
+  filename = format("%s/_output/adn.yaml", path.root)
 }
 
 resource "null_resource" "apply_manifest" {
-  depends_on = [local_file.this_kubeconfig, local_file.hipster_manifest]
+  depends_on = [local_file.this_kubeconfig, local_file.manifest]
   triggers = {
-    manifest_sha1 = sha1(local.hipster_manifest_content)
+    manifest_sha1 = sha1(local.manifest_content)
   }
   provisioner "local-exec" {
-    command = "kubectl apply -f _output/hipster-adn.yaml"
+    command = "kubectl apply -f _output/adn.yaml"
     environment = {
-      KUBECONFIG = format("%s/_output/hipster_adn_vk8s_kubeconfig", path.root)
+      KUBECONFIG = format("%s/_output/adn_vk8s_kubeconfig", path.root)
     }
   }
   provisioner "local-exec" {
     when    = destroy
-    command = "kubectl delete -f _output/hipster-adn.yaml --ignore-not-found=true"
+    command = "kubectl delete -f _output/adn.yaml --ignore-not-found=true"
     environment = {
-      KUBECONFIG = format("%s/_output/hipster_adn_vk8s_kubeconfig", path.root)
+      KUBECONFIG = format("%s/_output/adn_vk8s_kubeconfig", path.root)
     }
     on_failure = continue
   }

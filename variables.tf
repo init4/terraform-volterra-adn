@@ -1,3 +1,16 @@
+variable "api_url" {
+  default = "https://f5-apac-sp.console.ves.volterra.io/api"
+}
+
+variable "api_p12_file" {
+  default = "/scratch/tmp/current/volterra.p12"
+}
+
+provider "volterra" {
+  api_p12_file = var.api_p12_file
+  url          = var.api_url
+}
+
 variable "adn_name" {
   type        = string
   description = "ADN Name. Also used as a prefix in names of related resources."

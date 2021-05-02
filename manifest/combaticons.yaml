@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: brawl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: brawl
+  template:
+    metadata:
+      labels:
+        app: brawl
+    spec:
+      containers:
+      - name: brawl
+        image: nginxdemos/nginx-hello
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: brawl-svc
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  selector:
+    app: brawl 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: onslaught
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: onslaught
+  template:
+    metadata:
+      labels:
+        app: onslaught
+    spec:
+      containers:
+      - name: onslaught
+        image: nginxdemos/nginx-hello
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: onslaught-svc
+  labels:
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  selector:
+    app: onslaught
+
+

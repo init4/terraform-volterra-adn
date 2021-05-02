@@ -1,5 +1,5 @@
 resource "volterra_origin_pool" "this" {
-  name                   = format("%s-server", var.adn_name)
+  name                   = format("%s-pool", var.adn_name)
   namespace              = local.namespace
   description            = format("Origin pool pointing to frontend k8s service running on RE's")
   loadbalancer_algorithm = "ROUND ROBIN"
@@ -8,7 +8,22 @@ resource "volterra_origin_pool" "this" {
       inside_network  = false
       outside_network = false
       vk8s_networks   = true
-      service_name    = format("frontend.%s", local.namespace)
+      service_name    = format("brawl-svc.%s", local.namespace)
+      site_locator {
+        virtual_site {
+          name      = "ves-io-all-res"
+          namespace = "shared"
+          tenant    = "ves-io"
+        }
+      }
+    }
+  }
+  origin_servers {
+    k8s_service {
+      inside_network  = false
+      outside_network = false
+      vk8s_networks   = true
+      service_name    = format("onslaught-svc.%s", local.namespace)
       site_locator {
         virtual_site {
           name      = "ves-io-all-res"
